@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Customer List";
+    var customer = ViewData["customer1"] as Customer;
+}
+
+<table>
+    <br>
+    <img src="@Model._customers[0].image">
+    <tr>
+        <td>CustomerId: </td>
+        <td>@Model._customers[0].customerId</td>
+    </tr>
+    <tr>
+        <td>Name: </td>
+        <td>@Model._customers[0].name</td>
+    </tr>
+    <tr>
+        <td>Address: </td>
+        <td>@Model._customers[0].address</td>
+    </tr>
+</table>
+
+<hr />
+
+<p>View data customer 1</p>
+<p>@customer.customerId</p>
+<p>@customer.name</p>
+<p>@customer.address</p>
+
+<hr />
+
+<p>View data message</p>
+<p>@ViewData["message"]</p>
+
+<hr />
+<p>Viewbag customer 2</p>
+<p>@ViewBag.customer2.customerId</p>
+<p>@ViewBag.customer2.name</p>
+<p>@ViewBag.customer2.address</p>
+
+
+@section Fpoly {
+    <p>Section is declared at layout pages but content of</p>
+}
