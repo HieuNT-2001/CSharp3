@@ -7,11 +7,14 @@
         public String address { get; set; }
         public String image { get; set; }
 
-        public Customer()
+        public Customer() { }
+
+        public Customer(int customerId, string name, string address, string image)
         {
-            customerId = 1;
-            name = "Thepv";
-            address = "Tphcm";
+            this.customerId = customerId;
+            this.name = name;
+            this.address = address;
+            this.image = image;
         }
     }
 }

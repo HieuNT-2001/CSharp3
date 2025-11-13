@@ -31,11 +31,11 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Customer"
-                                asp-action="Index">Customer</a>
+                                asp-action="Index">Customers</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Customer"
-                                asp-action="Customers">Customer List</a>
+                                asp-action="Customers">Customer Test</a>
                         </li>
                     </ul>
                 </div>
@@ -47,10 +47,10 @@
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
-    </div>
 
-    <div>
-        @RenderSection(name: "Fpoly", required: false)
+        <div>
+            @RenderSection(name: "Fpoly", required: false)
+        </div>
     </div>
 
     <footer class="border-top footer text-muted">
