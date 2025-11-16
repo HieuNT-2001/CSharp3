@@ -45,10 +45,15 @@
 
     <div class="container">
         <main role="main" class="pb-3">
+            @* Hiển thị nội dung chính của View được render bên trong Layout. *@
+            @* Khi một View sử dụng Layout, phần nội dung bên trong View sẽ được chèn vào vị trí này. *@
             @RenderBody()
         </main>
 
         <div>
+            @* Hiển thị một section có tên "Fpoly" nếu View định nghĩa section này. *@
+            @* Tham số 'required: false' nghĩa là nếu View không định nghĩa section này thì Layout vẫn render bình thường mà không lỗi. *@
+            @* Nếu 'required: true' mà View không có section thì sẽ báo lỗi. *@
             @RenderSection(name: "Fpoly", required: false)
         </div>
     </div>
@@ -61,6 +66,10 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @* Tương tự như RenderSection, nhưng dùng cho section kiểu async (thường dùng để load script JS). *@
+    @* 'await' đảm bảo section được render đúng thứ tự, hỗ trợ các script async trong Layout. *@
+    @* 'required: false' nghĩa là nếu View không có section "Scripts", Layout vẫn render bình thường. *@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
