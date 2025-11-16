@@ -11,35 +11,35 @@
     <h4>Customer</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.customerId)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CustomerId):
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.customerId)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CustomerId)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.name)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name):
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.name)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.address)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Address):
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.address)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Address)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.image)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Image):
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.image)
+        <dd class="col-sm-10">
+            <img src="@Html.DisplayFor(model => model.Image)" />
         </dd>
     </dl>
-    
+
     <form asp-action="confirmDelete">
-        <input type="hidden" asp-for="customerId" />
+        <input type="hidden" asp-for="CustomerId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Index" class="btn btn-primary">Back to List</a>
     </form>
 </div>

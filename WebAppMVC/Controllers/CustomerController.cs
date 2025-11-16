@@ -1,24 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebAppMVC.Data;
 using WebAppMVC.Models;
 
 namespace WebAppMVC.Controllers
 {
     public class CustomerController : Controller
     {
-        static List<Customer> customers = new List<Customer>(){
-            new Customer {customerId = 1001, name = "A", address = "dia chi cua A", image = "https://placehold.co/100"},
-            new Customer {customerId = 1002, name = "B", address = "dia chi cua B", image = "https://placehold.co/100"},
-            new Customer {customerId = 1003, name = "C", address = "dia chi cua C", image = "https://placehold.co/100"},
-            new Customer {customerId = 1004, name = "D", address = "dia chi cua D", image = "https://placehold.co/100"},
-            new Customer {customerId = 1005, name = "E", address = "dia chi cua E", image = "https://placehold.co/100"},
-        };
+        private readonly AppDbContext _context;
+
+        public CustomerController(AppDbContext context)
+        {
+            _context = context;
+        }
 
         public IActionResult Customers()
         {
             TestCustomer customers = new TestCustomer();
             ViewData["message"] = "This is message transfer by ViewData";
-            ViewData["customer1"] = new Customer() { customerId = 999, name = "customer 1", address = "HP" };
-            ViewBag.customer2 = new Customer() { customerId = 1000, name = "customer 2", address = "HD" };
+            ViewData["customer1"] = new Customer() { CustomerId = 999, Name = "customer 1", Address = "HP" };
+            ViewBag.customer2 = new Customer() { CustomerId = 1000, Name = "customer 2", Address = "HD" };
             return View(customers);
         }
 
@@ -37,6 +37,7 @@ namespace WebAppMVC.Controllers
 
         public IActionResult Index()
         {
+            var customers = _context.Customers.ToList();
             return View(customers);
         }
 
@@ -49,64 +50,63 @@ namespace WebAppMVC.Controllers
         [HttpPost]
         public IActionResult Create(Customer customer)
         {
-            customers.Add(customer);
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                _context.Customers.Add(customer);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            
+            return View(customer);
         }
 
         [HttpGet]
         public IActionResult Details(int id)
         {
-            Customer customer = new Customer();
-            foreach (Customer item in customers)
-            {
-                if (item.customerId == id) { customer = item; break; }
-            }
+            var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == id);
+            if (customer == null) return NotFound();
             return View(customer);
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public IActionResult Edit(long id)
         {
-            Customer customer = new Customer();
-            foreach (Customer item in customers)
-            {
-                if (item.customerId == id) { customer = item; break; }
-            }
+            var customer = _context.Customers.Find(id);
+            if (customer == null) return NotFound();
             return View(customer);
         }
 
         [HttpPost]
         public IActionResult Edit(Customer customer)
         {
-            foreach (Customer item in customers)
+            if (ModelState.IsValid)
             {
-                if (item.customerId == customer.customerId)
-                {
-                    item.name = customer.name;
-                    item.address = customer.address;
-                    item.image = customer.image;
-                    break;
-                }
+                _context.Customers.Update(customer);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
             }
-            return RedirectToAction("Index");
+
+            return View(customer);
         }
 
         [HttpGet]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(long id)
         {
-            Customer customer = new Customer();
-            foreach (Customer item in customers)
-            {
-                if (item.customerId == id) { customer = item; break; }
-            }
+            var customer = _context.Customers.Find(id);
+            if (customer == null) return NotFound();
             return View(customer);
         }
 
         [HttpPost]
-        public IActionResult confirmDelete(int customerId)
+        public IActionResult confirmDelete(long customerId)
         {
-            var customer = customers.FirstOrDefault(item => item.customerId == customerId);
-            if (customer != null) customers.Remove(customer);
+            var customer = _context.Customers.Find(customerId);
+            if (customer != null)
+            {
+                _context.Customers.Remove(customer);
+                _context.SaveChanges();
+            }
+
             return RedirectToAction("Index");
         }
     }

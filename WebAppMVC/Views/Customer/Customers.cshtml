@@ -5,27 +5,27 @@
 
 <table>
     <br>
-    <img src="@Model._customers[0].image">
+    <img src="@Model._customers[0].Image">
     <tr>
         <td>CustomerId: </td>
-        <td>@Model._customers[0].customerId</td>
+        <td>@Model._customers[0].CustomerId</td>
     </tr>
     <tr>
         <td>Name: </td>
-        <td>@Model._customers[0].name</td>
+        <td>@Model._customers[0].Name</td>
     </tr>
     <tr>
         <td>Address: </td>
-        <td>@Model._customers[0].address</td>
+        <td>@Model._customers[0].Address</td>
     </tr>
 </table>
 
 <hr />
 
 <p>View data customer 1</p>
-<p>@customer.customerId</p>
-<p>@customer.name</p>
-<p>@customer.address</p>
+<p>@(customer == null ? "No customer" : customer.CustomerId.ToString())</p>
+<p>@(customer == null ? "" : customer.Name)</p>
+<p>@(customer == null ? "" : customer.Address)</p>
 
 <hr />
 
@@ -34,9 +34,9 @@
 
 <hr />
 <p>Viewbag customer 2</p>
-<p>@ViewBag.customer2.customerId</p>
-<p>@ViewBag.customer2.name</p>
-<p>@ViewBag.customer2.address</p>
+<p>@ViewBag.customer2.CustomerId</p>
+<p>@ViewBag.customer2.Name</p>
+<p>@ViewBag.customer2.Address</p>
 
 
 @section Fpoly {

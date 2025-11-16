@@ -8,11 +8,11 @@ namespace WebAppMVC.Models
         {
             _customers = new List<Customer>()
             {
-                new Customer() {customerId = 1, name = "FpolyHN", address = "HN", image = "https://placehold.co/400"},
-                new Customer() {customerId = 2, name = "FpolyHCM", address = "HCM", image = "https://placehold.co/400"},
-                new Customer() {customerId = 3, name = "FpolyDN", address = "DN", image = "https://placehold.co/400"},
-                new Customer() {customerId = 4, name = "FpolyCT", address = "CT", image = "https://placehold.co/400"},
-                new Customer() {customerId = 5, name = "FpolyTN", address = "TN", image = "https://placehold.co/400"}
+                new Customer() {CustomerId = 1, Name = "FpolyHN", Address = "HN", Image = "https://placehold.co/400"},
+                new Customer() {CustomerId = 2, Name = "FpolyHCM", Address = "HCM", Image = "https://placehold.co/400"},
+                new Customer() {CustomerId = 3, Name = "FpolyDN", Address = "DN", Image = "https://placehold.co/400"},
+                new Customer() {CustomerId = 4, Name = "FpolyCT", Address = "CT", Image = "https://placehold.co/400"},
+                new Customer() {CustomerId = 5, Name = "FpolyTN", Address = "TN", Image = "https://placehold.co/400"}
             };
         }
     }
