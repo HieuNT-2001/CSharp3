@@ -2,19 +2,19 @@
 {
     public class Customer
     {
-        public int customerId { get; set; }
-        public String name { get; set; }
-        public String address { get; set; }
-        public String image { get; set; }
+        public int CustomerId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+        public string Image { get; set; } = string.Empty;
 
         public Customer() { }
 
         public Customer(int customerId, string name, string address, string image)
         {
-            this.customerId = customerId;
-            this.name = name;
-            this.address = address;
-            this.image = image;
+            this.CustomerId = customerId;
+            this.Name = name;
+            this.Address = address;
+            this.Image = image;
         }
     }
 }
