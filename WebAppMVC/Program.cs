@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebAppMVC.Data;
 
+// Tạo một builder cho ứng dụng web, dùng để cấu hình các dịch vụ và middleware
 var builder = WebApplication.CreateBuilder(args);
 
 // Đọc connection string từ appsettings.json
@@ -12,6 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(conn
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Xây dựng (build) ứng dụng từ builder
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,8 +39,10 @@ app.UseAuthorization();
 // Bản đồ các tài nguyên tĩnh tùy chỉnh, ví dụ như các thư mục riêng hoặc file cụ thể (tương tự UseStaticFiles nhưng có thể cấu hình riêng)
 app.MapStaticAssets();
 
-//app.UseEndpoints(endpoints =>
-//{
+// Cấu hình các endpoint cho ứng dụng (các route của MVC)
+// app.UseEndpoints(endpoints =>
+// {
+//     // Route mặc định: nếu không chỉ định controller/action, sẽ mặc định dùng HomeController và Index action
 //    endpoints.MapControllerRoute(
 //        name: "default",
 //        pattern: "{controller=Home}/{action=Index}/{id?}");
@@ -67,13 +71,16 @@ app.MapStaticAssets();
 //        name: "new-customer",
 //        pattern: "Customer/xoa/{id}",
 //        defaults: new { controller = "Customer", action = "Delete" });
-//});
+// });
 
+// Route mặc định khác (có thể không cần vì đã khai báo trong UseEndpoints)
 app.MapControllerRoute(
    name: "default",
    pattern: "{controller=Home}/{action=Index}/{id?}"
 );
 
+// Route đơn giản trả về chuỗi "Hello, Thepv!" khi truy cập vào root "/"
 //app.MapGet("/", () => "Hello, Thepv!");
 
+// Chạy ứng dụng web
 app.Run();
