@@ -11,7 +11,22 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
 // Add services to the container.
+// Đăng ký dịch vụ MVC với hỗ trợ controller và views
 builder.Services.AddControllersWithViews();
+
+// Đăng ký dịch vụ bộ nhớ phân tán (Distributed Memory Cache)
+builder.Services.AddDistributedMemoryCache();
+
+// Đăng ký dịch vụ session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian hết hạn session
+    options.Cookie.HttpOnly = true; // Chỉ cho phép truy cập cookie qua HTTP, không qua JavaScript
+    options.Cookie.IsEssential = true; // Cookie này là cần thiết cho ứng dụng
+});
+
+// Đăng ký dịch vụ truy cập HttpContext
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 // Xây dựng (build) ứng dụng từ builder
 var app = builder.Build();
@@ -38,6 +53,9 @@ app.UseAuthorization();
 
 // Bản đồ các tài nguyên tĩnh tùy chỉnh, ví dụ như các thư mục riêng hoặc file cụ thể (tương tự UseStaticFiles nhưng có thể cấu hình riêng)
 app.MapStaticAssets();
+
+// Kích hoạt sử dụng session trong ứng dụng
+app.UseSession();
 
 // Cấu hình các endpoint cho ứng dụng (các route của MVC)
 // app.UseEndpoints(endpoints =>
