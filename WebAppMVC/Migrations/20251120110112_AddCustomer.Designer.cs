@@ -11,8 +11,8 @@ using WebAppMVC.Data;
 namespace WebAppMVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251120094232_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251120110112_AddCustomer")]
+    partial class AddCustomer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
