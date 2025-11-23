@@ -1,20 +1,21 @@
-﻿namespace WebAppMVC.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WebAppMVC.Models
 {
+    [Table("Customers", Schema = "admin")]
     public class Customer
     {
+        [Key]
         public long CustomerId { get; set; }
+
+        [Required]
         public string Name { get; set; } = string.Empty;
+
+        [Required]
         public string Address { get; set; } = string.Empty;
+
+        [Required]
         public string Image { get; set; } = string.Empty;
-
-        public Customer() { }
-
-        public Customer(int customerId, string name, string address, string image)
-        {
-            this.CustomerId = customerId;
-            this.Name = name;
-            this.Address = address;
-            this.Image = image;
-        }
     }
 }

@@ -1,13 +1,33 @@
-﻿namespace WebAppMVC.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WebAppMVC.Models
 {
+    [Table("Products", Schema = "admin")]
     public class Product
     {
+        [Key]
         public long ProductId { get; set; }
-        public string Name { get; set; } = string.Empty;
+
+        [Required]
+        public string ProductName { get; set; } = string.Empty;
+
+        [Required]
         public decimal Price { get; set; }
+
+        [Required]
         public string Description { get; set; } = string.Empty;
+
+        [Required]
         public long Quantity { get; set; }
+
+        [Required]
         public bool Status { get; set; }
 
+        [Required]
+        [ForeignKey("Category")]
+        public int CategoryId { get; set; }
+
+        public Category? Category { get; set; }
     }
 }

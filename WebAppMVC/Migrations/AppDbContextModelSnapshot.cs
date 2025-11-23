@@ -21,6 +21,23 @@ namespace WebAppMVC.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("WebAppMVC.Models.Category", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("Categories", "admin");
+                });
+
             modelBuilder.Entity("WebAppMVC.Models.Customer", b =>
                 {
                     b.Property<long>("CustomerId")
@@ -43,7 +60,7 @@ namespace WebAppMVC.Migrations
 
                     b.HasKey("CustomerId");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", "admin");
                 });
 
             modelBuilder.Entity("WebAppMVC.Models.Product", b =>
@@ -54,16 +71,19 @@ namespace WebAppMVC.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ProductId"));
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("Quantity")
                         .HasColumnType("bigint");
@@ -73,7 +93,25 @@ namespace WebAppMVC.Migrations
 
                     b.HasKey("ProductId");
 
-                    b.ToTable("Products");
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Products", "admin");
+                });
+
+            modelBuilder.Entity("WebAppMVC.Models.Product", b =>
+                {
+                    b.HasOne("WebAppMVC.Models.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("WebAppMVC.Models.Category", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }
