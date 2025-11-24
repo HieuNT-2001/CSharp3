@@ -1,47 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebAppMVC.Data;
 using WebAppMVC.Models;
+using WebAppMVC.Services.Interfaces;
 
 namespace WebAppMVC.Controllers
 {
     public class ProductController : Controller
     {
+        private readonly IProductService _productService;
         private readonly AppDbContext _context;
 
-        public ProductController(AppDbContext context)
+        public ProductController(IProductService productService, AppDbContext context)
         {
+            _productService = productService;
             _context = context;
         }
 
         // GET: Product
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Products.Include(p => p.Category);
-            return View(await appDbContext.ToListAsync());
+            var users = await _productService.GetAllAsync();
+            return View(users);
         }
 
         // GET: Product/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.ProductId == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
+            var product = await _productService.GetByIdAsync(id.Value);
+            if (product == null) return NotFound();
             return View(product);
         }
 
@@ -59,17 +48,9 @@ namespace WebAppMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductId,ProductName,Price,Description,Quantity,Status,CategoryId")] Product product)
         {
-            //Console.WriteLine(product.ProductId);
-            //Console.WriteLine(product.ProductName);
-            //Console.WriteLine(product.Price);
-            //Console.WriteLine(product.Description);
-            //Console.WriteLine(product.Quantity);
-            //Console.WriteLine(product.Status);
-            //Console.WriteLine(product.CategoryId);
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                await _productService.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", product.CategoryId);
@@ -79,16 +60,9 @@ namespace WebAppMVC.Controllers
         // GET: Product/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
+            var product = await _productService.GetByIdAsync(id.Value);
+            if (product == null) return NotFound();
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", product.CategoryId);
             return View(product);
         }
@@ -100,21 +74,16 @@ namespace WebAppMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("ProductId,ProductName,Price,Description,Quantity,Status,CategoryId")] Product product)
         {
-            if (id != product.ProductId)
-            {
-                return NotFound();
-            }
-
+            if (id != product.ProductId) return NotFound();
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
+                    await _productService.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.ProductId))
+                    if (!_productService.Exists(product.ProductId))
                     {
                         return NotFound();
                     }
@@ -132,19 +101,9 @@ namespace WebAppMVC.Controllers
         // GET: Product/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.ProductId == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
+            var product = await _productService.GetByIdAsync(id.Value);
+            if (product == null) return NotFound();
             return View(product);
         }
 
@@ -153,19 +112,8 @@ namespace WebAppMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-            }
-
-            await _context.SaveChangesAsync();
+            await _productService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProductExists(long id)
-        {
-            return _context.Products.Any(e => e.ProductId == id);
         }
     }
 }

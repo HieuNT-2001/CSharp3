@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebAppMVC.Data;
+using WebAppMVC.Services.Implements;
+using WebAppMVC.Services.Interfaces;
 
 // Tạo một builder cho ứng dụng web, dùng để cấu hình các dịch vụ và middleware
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 // Đăng ký DbContext
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+
+// Đăng ký dịch vụ ProductService cho IProductService
+builder.Services.AddScoped<IProductService, ProductService>();
 
 // Add services to the container.
 // Đăng ký dịch vụ MVC với hỗ trợ controller và views
