@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WebAppMVC.Data;
+using WebAppMVC.Models;
 using WebAppMVC.Services.Implements;
 using WebAppMVC.Services.Interfaces;
 
@@ -11,6 +13,34 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 // Đăng ký DbContext
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+
+// Đăng ký Identity với User mặc định và yêu cầu xác nhận tài khoản qua email
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+    options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<AppDbContext>();
+
+// Đăng ký Identity với user tủy chỉnh và các tùy chọn cấu hình
+//builder.Services.AddIdentity<User, IdentityRole>(options =>
+//{
+//    // Cấu hình các tùy chọn về mật khẩu
+//    options.Password.RequireDigit = true; // Yêu cầu có chữ số
+//    options.Password.RequiredLength = 8; // Độ dài tối thiểu của mật khẩu
+//    options.Password.RequireNonAlphanumeric = true; // Yêu cầu có ký tự đặc biệt
+//    options.Password.RequireUppercase = true; // Yêu cầu có chữ hoa
+//    options.Password.RequireLowercase = true; // Yêu cầu có chữ thường
+//    //options.Password.RequiredUniqueChars = 1; // Số ký tự duy nhất tối thiểu
+
+//    // Cấu hình các tùy chọn về khóa tài khoản
+//    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Thời gian khóa tài khoản
+//    options.Lockout.MaxFailedAccessAttempts = 5; // Số lần đăng nhập thất bại tối đa trước khi khóa
+//    options.Lockout.AllowedForNewUsers = true; // Cho phép khóa tài khoản cho người dùng mới
+
+//    // Cấu hình các tùy chọn về người dùng
+//    options.User.RequireUniqueEmail = true; // Yêu cầu email phải là duy nhất
+//    options.SignIn.RequireConfirmedEmail = true; // Yêu cầu xác nhận email khi đăng nhập
+//})
+//.AddEntityFrameworkStores<AppDbContext>() // Sử dụng AppDbContext để lưu trữ thông tin Identity
+//.AddDefaultTokenProviders(); // Thêm các token mặc định (ví dụ: xác nhận email, đặt lại mật khẩu)
 
 // Đăng ký dịch vụ ProductService cho IProductService
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -53,8 +83,14 @@ app.UseHttpsRedirection();
 // Thiết lập hệ thống định tuyến, cho phép ánh xạ URL đến các controller hoặc endpoint tương ứng
 app.UseRouting();
 
+// Bật cơ chế xác thực (Authentication) để xác định người dùng
+app.UseAuthentication();
+
 // Bật cơ chế xác thực và phân quyền (Authorization) trên các endpoint đã được định nghĩa
 app.UseAuthorization();
+
+// Bản đồ các trang Razor Pages (nếu có sử dụng Razor Pages trong ứng dụng)
+app.MapRazorPages();
 
 // Bản đồ các tài nguyên tĩnh tùy chỉnh, ví dụ như các thư mục riêng hoặc file cụ thể (tương tự UseStaticFiles nhưng có thể cấu hình riêng)
 app.MapStaticAssets();
