@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAppMVC.Data;
 using WebAppMVC.Models;
+using WebAppMVC.Models.Entities;
 
 namespace WebAppMVC.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

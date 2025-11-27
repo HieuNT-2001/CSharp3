@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebAppMVC.Data;
-using WebAppMVC.Models;
+using WebAppMVC.Models.Entities;
 
 namespace WebAppMVC.Controllers
 {
@@ -15,7 +15,14 @@ namespace WebAppMVC.Controllers
 
         public IActionResult Customers()
         {
-            TestCustomer customers = new TestCustomer();
+            var customers = new List<Customer>()
+            {
+                new Customer() {CustomerId = 1, Name = "FpolyHN", Address = "HN", Image = "https://placehold.co/400"},
+                new Customer() {CustomerId = 2, Name = "FpolyHCM", Address = "HCM", Image = "https://placehold.co/400"},
+                new Customer() {CustomerId = 3, Name = "FpolyDN", Address = "DN", Image = "https://placehold.co/400"},
+                new Customer() {CustomerId = 4, Name = "FpolyCT", Address = "CT", Image = "https://placehold.co/400"},
+                new Customer() {CustomerId = 5, Name = "FpolyTN", Address = "TN", Image = "https://placehold.co/400"}
+            };
             ViewData["message"] = "This is message transfer by ViewData";
             ViewData["customer1"] = new Customer() { CustomerId = 999, Name = "customer 1", Address = "HP" };
             ViewBag.customer2 = new Customer() { CustomerId = 1000, Name = "customer 2", Address = "HD" };

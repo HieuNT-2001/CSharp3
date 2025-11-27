@@ -1,4 +1,4 @@
-﻿using WebAppMVC.Models;
+﻿using WebAppMVC.Models.Entities;
 
 namespace WebAppMVC.Services.Interfaces
 {

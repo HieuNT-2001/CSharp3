@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebAppMVC.Data;
-using WebAppMVC.Models;
+using WebAppMVC.Models.Entities;
 using WebAppMVC.Repositories.Interfaces;
 
 namespace WebAppMVC.Repositories.Implements

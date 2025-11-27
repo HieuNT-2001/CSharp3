@@ -1,6 +1,7 @@
-﻿@* Khai báo kiểu dữ liệu (model) mà View này sẽ sử dụng. *@
+﻿@using WebAppMVC.Models.Entities
+@* Khai báo kiểu dữ liệu (model) mà View này sẽ sử dụng. *@
 @* @model: Razor directive dùng để xác định kiểu dữ liệu được truyền từ Controller vào View. *@
-@model IEnumerable<WebAppMVC.Models.Customer>
+@model IEnumerable<Customer>
 
 @{
     ViewData["Title"] = "Customers";
@@ -10,6 +11,7 @@
 
 <p>
     <a asp-controller="Customer" asp-action="Create" class="btn btn-primary">Create New</a>
+    <a asp-controller="Customer" asp-action="Customers" class="btn btn-primary">Customer Test</a>
 </p>
 <table class="table">
     <thead>
@@ -47,11 +49,11 @@
                 </td>
                 <td>
                     <a asp-controller="Customer" asp-action="Edit" asp-route-id="@item.CustomerId"
-                        class="btn btn-warning">Edit</a> |
+                       class="btn btn-warning">Edit</a> |
                     <a asp-controller="Customer" asp-action="Details" asp-route-id="@item.CustomerId"
-                        class="btn btn-secondary">Details</a> |
+                       class="btn btn-secondary">Details</a> |
                     <a asp-controller="Customer" asp-action="Delete" asp-route-id="@item.CustomerId"
-                        class="btn btn-danger">Delete</a>
+                       class="btn btn-danger">Delete</a>
                     @* @Html.ActionLink("Edit", "Edit", new { id = item.CustomerId }) |
                     @Html.ActionLink("Details", "Details", new { id = item.CustomerId }) |
                     @Html.ActionLink("Delete", "Delete", new { id = item.CustomerId }) *@

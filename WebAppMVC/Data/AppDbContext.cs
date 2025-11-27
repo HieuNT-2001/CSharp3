@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using WebAppMVC.Models;
 using Microsoft.AspNetCore.Identity;
+using WebAppMVC.Models.Entities;
 
 namespace WebAppMVC.Data
 {

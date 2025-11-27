@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebAppMVC.Models
+namespace WebAppMVC.Models.Entities
 {
     [Table("Customers", Schema = "admin")]
     public class Customer

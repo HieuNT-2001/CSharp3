@@ -17,7 +17,8 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(conn
 // Đăng ký Identity với User mặc định và yêu cầu xác nhận tài khoản qua email
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<AppDbContext>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>(); // Sử dụng AppDbContext để lưu trữ thông tin Identity
 
 // Đăng ký Identity với user tủy chỉnh và các tùy chọn cấu hình
 //builder.Services.AddIdentity<User, IdentityRole>(options =>

@@ -35,22 +35,6 @@
                                asp-action="About">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-                               asp-action="GetCookie">Get Cookie</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-                               asp-action="DeleteCookie">Delete Cookie</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-                               asp-action="GetComplexData">ComplexDataSession</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Customer"
-                               asp-action="Customers">Customer Test</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Customer"
                                asp-action="Index">Customers</a>
                         </li>
@@ -59,9 +43,41 @@
                                asp-action="Index">Products</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })">Logout</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="User"
+                               asp-action="Index">Users</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Role"
+                               asp-action="Index">Roles</a>
+                        </li>
+
                     </ul>
+                    <div class="d-flex">
+                        <ul class="navbar-nav flex-grow-1">
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index"
+                                       asp-route-returnUrl="@Url.Page("/", new { area = "" })">@User.Identity.Name</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Logout"
+                                       asp-route-returnUrl="@Url.Page("/", new { area = "" })">Logout</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login"
+                                       asp-route-returnUrl="@Url.Page("/", new { area = "" })">Login</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register"
+                                       asp-route-returnUrl="@Url.Page("/", new { area = "" })">Register</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>

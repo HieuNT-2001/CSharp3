@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace WebAppMVC.Models
+namespace WebAppMVC.Models.Entities
 {
     public class User
     {

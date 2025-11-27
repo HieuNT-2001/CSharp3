@@ -1,31 +1,35 @@
+@using WebAppMVC.Models.Entities
+@model List<Customer>
+
 @{
     ViewData["Title"] = "Customer List";
-    var customer = ViewData["customer1"] as Customer;
+    // var customer = Model[0];
+    var customer1 = ViewData["customer1"] as Customer;
 }
 
 <table>
     <br>
-    <img src="@Model._customers[0].Image">
+    <img src="@Model[0].Image">
     <tr>
         <td>CustomerId: </td>
-        <td>@Model._customers[0].CustomerId</td>
+        <td>@Model[0].CustomerId</td>
     </tr>
     <tr>
         <td>Name: </td>
-        <td>@Model._customers[0].Name</td>
+        <td>@Model[0].Name</td>
     </tr>
     <tr>
         <td>Address: </td>
-        <td>@Model._customers[0].Address</td>
+        <td>@Model[0].Address</td>
     </tr>
 </table>
 
 <hr />
 
 <p>View data customer 1</p>
-<p>@(customer == null ? "No customer" : customer.CustomerId.ToString())</p>
-<p>@(customer == null ? "" : customer.Name)</p>
-<p>@(customer == null ? "" : customer.Address)</p>
+<p>@(customer1 == null ? "No customer" : customer1.CustomerId.ToString())</p>
+<p>@(customer1 == null ? "" : customer1.Name)</p>
+<p>@(customer1 == null ? "" : customer1.Address)</p>
 
 <hr />
 

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebAppMVC.Data;
-using WebAppMVC.Models;
+using WebAppMVC.Models.Entities;
 using WebAppMVC.Services.Interfaces;
 
 namespace WebAppMVC.Controllers
