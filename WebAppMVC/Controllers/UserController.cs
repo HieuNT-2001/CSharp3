@@ -29,7 +29,7 @@ namespace WebAppMVC.Controllers
                 model.Add(new UserWithRolesViewModel
                 {
                     Id = user.Id,
-                    Email = user.Email,
+                    Email = user.Email ?? "",
                     Roles = roles.ToList()
                 });
             }
@@ -41,6 +41,9 @@ namespace WebAppMVC.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null) return NotFound();
+
             var userRoles = await _userManager.GetRolesAsync(user);
 
             var allRoles = _roleManager.Roles.ToList();
@@ -48,11 +51,11 @@ namespace WebAppMVC.Controllers
             var model = new EditRoleViewModel
             {
                 UserId = user.Id,
-                Email = user.Email,
-                Roles = allRoles.Select(r => new RoleItem
+                Email = user.Email ?? "",
+                Roles = allRoles.Select(role => new RoleItem
                 {
-                    RoleName = r.Name,
-                    IsSelected = userRoles.Contains(r.Name)
+                    RoleName = role.Name ?? "",
+                    IsSelected = userRoles.Contains(role.Name ?? "")
                 }).ToList()
             };
 
@@ -63,6 +66,8 @@ namespace WebAppMVC.Controllers
         public async Task<IActionResult> Edit(EditRoleViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.UserId);
+
+            if (user == null) return NotFound();
 
             var oldRoles = await _userManager.GetRolesAsync(user);
 
