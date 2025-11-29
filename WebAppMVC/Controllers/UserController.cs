@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebAppMVC.Models;
 
 namespace WebAppMVC.Controllers
@@ -20,21 +21,8 @@ namespace WebAppMVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var users = _userManager.Users.ToList();
-            var model = new List<UserWithRolesViewModel>();
-
-            foreach (var user in users)
-            {
-                var roles = await _userManager.GetRolesAsync(user); // Lấy role của user
-                model.Add(new UserWithRolesViewModel
-                {
-                    Id = user.Id,
-                    Email = user.Email ?? "",
-                    Roles = roles.ToList()
-                });
-            }
-
-            return View(model);
+            var users = await _userManager.Users.ToListAsync();
+            return View(users);
         }
 
         [HttpGet]
