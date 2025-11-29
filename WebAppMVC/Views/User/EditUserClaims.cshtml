@@ -1,0 +1,33 @@
+﻿@using WebAppMVC.Models.ViewModels
+@model UserClaimsViewModel
+
+@{
+    ViewData["Title"] = "Set Role for User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Edit Claims for @Model.UserEmail</h3>
+
+<form method="post">
+    <input type="hidden" asp-for="UserId" />
+
+
+    <div class="card mb-3">
+        <div class="card-header">User Claims</div>
+        <div class="card-body">
+            @for (int i = 0; i < Model.Claims.Count; i++)
+            {
+                <div>
+                    <input type="checkbox" asp-for="Claims[i].IsSelected" />
+                    <label>@Model.Claims[i].ClaimType</label>
+                    <input type="hidden" asp-for="Claims[i].ClaimType" />
+                    <input type="hidden" asp-for="Claims[i].ClaimValue" />
+                </div>
+            }
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </div>
+</form>
+

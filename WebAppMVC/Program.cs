@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using WebAppMVC.Data;
 using WebAppMVC.Models;
 using WebAppMVC.Services.Implements;
@@ -42,6 +43,15 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 //})
 //.AddEntityFrameworkStores<AppDbContext>() // Sử dụng AppDbContext để lưu trữ thông tin Identity
 //.AddDefaultTokenProviders(); // Thêm các token mặc định (ví dụ: xác nhận email, đặt lại mật khẩu)
+
+// Cấu hình chính sách phân quyền
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin")); // Chỉ cho phép vai trò Admin
+    options.AddPolicy("RequireUserRole", policy => policy.RequireRole("User")); // Chỉ cho phép vai trò User
+    //options.AddPolicy("RequireUserRole", policy => policy.RequireClaim(ClaimTypes.Role, "User")); // Chỉ cho phép vai trò Use
+    options.AddPolicy("EditRolePolicy", policy => policy.RequireClaim("Edit Role")); // Yêu cầu có claim "Edit Role"
+});
 
 // Đăng ký dịch vụ ProductService cho IProductService
 builder.Services.AddScoped<IProductService, ProductService>();

@@ -28,9 +28,9 @@
                 <td>@user.Email</td>
                 <td>@user.UserName</td>
                 <td>
-                    <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id"
+                    <a asp-controller="User" asp-action="EditUserRoles" asp-route-id="@user.Id"
                        class="btn btn-primary">Roles</a> |
-                    <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id"
+                    <a asp-controller="User" asp-action="EditUserClaims" asp-route-id="@user.Id"
                        class="btn btn-primary">Claims</a>
                 </td>
             </tr>
