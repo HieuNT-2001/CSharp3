@@ -15,6 +15,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
 // Đăng ký dịch vụ bộ nhớ phân tán (Distributed Memory Cache)
+// Dịch vụ này cần thiết để sử dụng session trong ASP.NET Core]
+// Nó lưu trữ dữ liệu session trong bộ nhớ của máy chủ
+// Lưu ý: Dữ liệu session sẽ bị mất khi ứng dụng khởi động lại
+// Nếu cần lưu trữ lâu dài hơn, có thể sử dụng các nhà cung cấp khác như Redis hoặc SQL Server
 builder.Services.AddDistributedMemoryCache();
 
 // Đăng ký dịch vụ session
@@ -26,6 +30,7 @@ builder.Services.AddSession(options =>
 });
 
 // Đăng ký dịch vụ truy cập HttpContext
+// Dịch vụ này cho phép các lớp khác trong ứng dụng truy cập thông tin về yêu cầu HTTP hiện tại
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 // Đăng ký dịch vụ ProductService cho IProductService
@@ -45,6 +50,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 builder.Services.AddCors();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// Đăng ký dịch vụ OpenAPI (Swagger) để tạo tài liệu API tự động
 builder.Services.AddOpenApi();
 
 // Xây dựng (build) ứng dụng từ builder
