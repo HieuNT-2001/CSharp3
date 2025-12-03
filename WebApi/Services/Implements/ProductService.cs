@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
+using WebApi.Models.Dto;
 using WebApi.Models.Entities;
 using WebApi.Services.Interfaces;
 
@@ -16,12 +17,12 @@ namespace WebApi.Services.Implements
 
         public async Task<IEnumerable<Product>> GetAllAsync()
         {
-            return await _context.Products.Include(p => p.Category).ToListAsync();
+            return await _context.Products.ToListAsync();
         }
 
         public async Task<Product?> GetByIdAsync(long id)
         {
-            return await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.ProductId == id);
+            return await _context.Products.FirstOrDefaultAsync(p => p.ProductId == id);
         }
 
         public async Task CreateAsync(Product product)
@@ -49,6 +50,34 @@ namespace WebApi.Services.Implements
         public bool Exists(long id)
         {
             return _context.Products.Any(e => e.ProductId == id);
+        }
+
+        public async Task<IEnumerable<ProductCategoryDto>> GetAllWithCategoryAsync()
+        {
+            return await _context.Products.Select(p => new ProductCategoryDto
+            {
+                ProductId = p.ProductId,
+                ProductName = p.ProductName,
+                Price = p.Price,
+                Description = p.Description,
+                Quantity = p.Quantity,
+                Status = p.Status,
+                Category = p.Category!.CategoryName
+            }).ToListAsync();
+        }
+
+        public async Task<ProductCategoryDto?> GetByIdWithCategoryAsync(long id)
+        {
+            return await _context.Products.Where(p => p.ProductId == id).Select(p => new ProductCategoryDto
+            {
+                ProductId = p.ProductId,
+                ProductName = p.ProductName,
+                Price = p.Price,
+                Description = p.Description,
+                Quantity = p.Quantity,
+                Status = p.Status,
+                Category = p.Category!.CategoryName
+            }).FirstOrDefaultAsync();
         }
     }
 }

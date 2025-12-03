@@ -1,4 +1,5 @@
-﻿using WebApi.Models.Entities;
+﻿using WebApi.Models.Dto;
+using WebApi.Models.Entities;
 
 namespace WebApi.Services.Interfaces
 {
@@ -10,5 +11,7 @@ namespace WebApi.Services.Interfaces
         Task UpdateAsync(Product product);
         Task DeleteAsync(long id);
         bool Exists(long id);
+        Task<IEnumerable<ProductCategoryDto>> GetAllWithCategoryAsync();
+        Task<ProductCategoryDto?> GetByIdWithCategoryAsync(long id);
     }
 }
