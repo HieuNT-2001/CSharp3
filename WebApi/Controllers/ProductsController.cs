@@ -21,7 +21,7 @@ namespace WebApi.Controllers
         public async Task<ActionResult<IEnumerable<ProductCategoryDto>>> GetProducts()
         {
             var products = await _productService.GetAllWithCategoryAsync();
-            return products.ToList();
+            return Ok(products);
         }
 
         // GET: api/Products/5
@@ -30,7 +30,7 @@ namespace WebApi.Controllers
         {
             var product = await _productService.GetByIdWithCategoryAsync(id);
             if (product == null) return NotFound();
-            return product;
+            return Ok(product);
         }
 
         // PUT: api/Products/5
