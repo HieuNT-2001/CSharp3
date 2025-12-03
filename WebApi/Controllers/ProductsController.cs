@@ -35,9 +35,10 @@ namespace WebApi.Controllers
 
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut]
-        public async Task<IActionResult> PutProduct(Product product)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProduct(long id, Product product)
         {
+            if (!_productService.Exists(id)) return NotFound();
             await _productService.UpdateAsync(product);
             return NoContent();
         }
@@ -55,6 +56,7 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(long id)
         {
+            if (!_productService.Exists(id)) return NotFound();
             await _productService.DeleteAsync(id);
             return NoContent();
         }
