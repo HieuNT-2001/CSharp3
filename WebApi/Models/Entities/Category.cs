@@ -7,7 +7,7 @@ namespace WebApi.Models.Entities
     public class Category
     {
         [Key]
-        public int CategoryId { get; set; }
+        public long CategoryId { get; set; }
 
         [Required]
         public string CategoryName { get; set; } = string.Empty;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 using WebApi.Data;
 using WebApi.Services.Implements;
 using WebApi.Services.Interfaces;
@@ -9,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 // Đọc connection string từ appsettings.json
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("LocalDbConnection");
 
 // Đăng ký DbContext
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
@@ -53,13 +54,51 @@ builder.Services.AddCors();
 // Đăng ký dịch vụ OpenAPI (Swagger) để tạo tài liệu API tự động
 builder.Services.AddOpenApi();
 
+// Cấu hình Swagger với thông tin chi tiết về API
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "My API",
+        Version = "v1",
+        Description = "This is my API description",
+        TermsOfService = new Uri("https://example.com/terms"),
+        Contact = new OpenApiContact
+        {
+            Name = "Your Name",
+            Email = "your.email@example.com",
+            Url = new Uri("https://example.com"),
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Use under LICX",
+            Url = new Uri("https://example.com/license"),
+        }
+    });
+
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
+
 // Xây dựng (build) ứng dụng từ builder
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Sử dụng Swagger và giao diện người dùng Swagger trong môi trường phát triển
     app.MapOpenApi();
+
+    // Bật Swagger middleware để phục vụ tài liệu API ở định dạng JSON
+    app.UseSwagger();
+
+    // Bật Swagger UI middleware để cung cấp giao diện người dùng cho tài liệu API
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.RoutePrefix = "swagger"; // Đặt Swagger UI tại gốc của ứng dụng
+    });
 }
 
 // Cấu hình CORS để cho phép tất cả các nguồn, phương thức và header

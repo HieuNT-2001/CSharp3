@@ -26,7 +26,7 @@ namespace WebApi.Models.Entities
 
         [Required]
         [ForeignKey("Category")]
-        public int CategoryId { get; set; }
+        public long CategoryId { get; set; }
 
         // virtual để hỗ trợ lazy loading
         public virtual Category? Category { get; set; }

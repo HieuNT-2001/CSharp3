@@ -16,6 +16,14 @@ namespace WebApi.Controllers
             _productService = productService;
         }
 
+        /// <summary>
+        /// Retrieves a list of all products along with their associated category information.
+        /// </summary>
+        /// <remarks>This method handles HTTP GET requests for the products endpoint. The returned list
+        /// includes both product details and their corresponding categories. The response has an HTTP 200 status code
+        /// on success.</remarks>
+        /// <returns>An <see cref="ActionResult{T}"/> containing a collection of <see cref="ProductCategoryDto"/> objects. The
+        /// collection will be empty if no products are available.</returns>
         // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductCategoryDto>>> GetProducts()
