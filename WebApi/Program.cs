@@ -76,6 +76,8 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 
+    // Cấu hình Swagger để đọc XML comments từ file tài liệu XML
+    // Thiết lập đường dẫn tới file XML chứa chú thích (comments) để Swagger có thể hiển thị chúng
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
