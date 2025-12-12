@@ -401,3 +401,6 @@ FodyWeavers.xsd
 *.sln.iml
 WebAppMVC/appsettings.Development.json
 /WebAppMVC/appsettings.Development.json
+/WebApi/appsettings.Development.json
+/WebApi/appsettings.Development.json
+/WebApi/appsettings.Development.json
