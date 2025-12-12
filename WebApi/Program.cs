@@ -2,8 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Serilog;
 using System.Text;
 using WebApi.Data;
+using WebApi.Handlers;
 using WebApi.Models.Entities;
 using WebApi.Services.Implements;
 using WebApi.Services.Interfaces;
@@ -161,6 +163,21 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true; // Cookie này là cần thiết cho ứng dụng
 });
 
+// Đăng ký Global Handler Exception 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+// Đăng ký Problem Details middleware
+builder.Services.AddProblemDetails();
+
+// Cấu hình Serilog làm hệ thống logging
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console() // Ghi log ra console
+    .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day) // Ghi log ra file với phân đoạn theo ngày
+    .CreateLogger(); // Tạo logger
+
+// Sử dụng Serilog trong ứng dụng
+builder.Host.UseSerilog();
+
 // Xây dựng (build) ứng dụng từ builder
 var app = builder.Build();
 
@@ -180,6 +197,10 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = "swagger"; // Đặt Swagger UI tại gốc của ứng dụng
     });
 }
+
+// Cấu hình xử lý ngoại lệ toàn cục
+// (Lưu ý đặt trước UseRouting hoặc bật kỳ middleware nào có thể ném exception nếu có)
+app.UseExceptionHandler();
 
 // Cấu hình CORS để cho phép tất cả các nguồn, phương thức và header
 app.UseCors(builder =>
