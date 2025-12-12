@@ -1,6 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using System.Text;
 using WebApi.Data;
+using WebApi.Models.Entities;
 using WebApi.Services.Implements;
 using WebApi.Services.Interfaces;
 
@@ -9,25 +13,65 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+// Thêm tệp cấu hình appsettings.json
+//builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
 // Đọc connection string từ appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("LocalDbConnection");
 
 // Đăng ký DbContext
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
-// Đăng ký dịch vụ bộ nhớ phân tán (Distributed Memory Cache)
-// Dịch vụ này cần thiết để sử dụng session trong ASP.NET Core]
-// Nó lưu trữ dữ liệu session trong bộ nhớ của máy chủ
-// Lưu ý: Dữ liệu session sẽ bị mất khi ứng dụng khởi động lại
-// Nếu cần lưu trữ lâu dài hơn, có thể sử dụng các nhà cung cấp khác như Redis hoặc SQL Server
-builder.Services.AddDistributedMemoryCache();
-
-// Đăng ký dịch vụ session
-builder.Services.AddSession(options =>
+// Đăng ký Identity với user tủy chỉnh và các tùy chọn cấu hình
+builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian hết hạn session
-    options.Cookie.HttpOnly = true; // Chỉ cho phép truy cập cookie qua HTTP, không qua JavaScript
-    options.Cookie.IsEssential = true; // Cookie này là cần thiết cho ứng dụng
+    // Cấu hình các tùy chọn về mật khẩu
+    options.Password.RequiredLength = 8; // Độ dài tối thiểu của mật khẩu
+    options.Password.RequireDigit = true; // Yêu cầu có chữ số
+    options.Password.RequireNonAlphanumeric = false; // Yêu cầu có ký tự đặc biệt
+    options.Password.RequireUppercase = false; // Yêu cầu có chữ hoa
+    options.Password.RequireLowercase = false; // Yêu cầu có chữ thường
+    options.Password.RequiredUniqueChars = 1; // Số ký tự duy nhất tối thiểu
+
+    // Cấu hình các tùy chọn về khóa tài khoản
+    //options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30); // Thời gian khóa tài khoản
+    //options.Lockout.MaxFailedAccessAttempts = 5; // Số lần đăng nhập thất bại tối đa trước khi khóa
+    //options.Lockout.AllowedForNewUsers = true; // Cho phép khóa tài khoản cho người dùng mới
+
+    // Cấu hình các tùy chọn về người dùng
+    options.User.RequireUniqueEmail = true; // Yêu cầu email phải là duy nhất
+    //options.SignIn.RequireConfirmedEmail = true; // Yêu cầu xác nhận email khi đăng nhập
+})
+.AddEntityFrameworkStores<AppDbContext>() // Sử dụng AppDbContext để lưu trữ thông tin Identity
+.AddDefaultTokenProviders(); // Thêm các token mặc định (ví dụ: xác nhận email, đặt lại mật khẩu)
+
+// Đăng ký cấu hình JWT từ appsettings.json
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+
+// Cấu hình xác thực JWT
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+var key = Encoding.UTF8.GetBytes(jwtSettings!.Secret);
+
+// Đăng ký dịch vụ xác thực với JWT Bearer
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "JwtBearer";
+    options.DefaultChallengeScheme = "JwtBearer";
+})
+.AddJwtBearer("JwtBearer", options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings.Issuer,
+        ValidAudience = jwtSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ClockSkew = TimeSpan.Zero
+    };
 });
 
 // Đăng ký dịch vụ truy cập HttpContext
@@ -39,6 +83,9 @@ builder.Services.AddScoped<IProductService, ProductService>();
 
 // Đăng ký dịch vụ CategoryService cho ICategoryService
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+// Đăng ký dịch vụ TokenService cho ITokenService
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Đăng ký dịch vụ controllers với cấu hình JSON
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
@@ -54,7 +101,7 @@ builder.Services.AddCors();
 // Đăng ký dịch vụ OpenAPI (Swagger) để tạo tài liệu API tự động
 builder.Services.AddOpenApi();
 
-// Cấu hình Swagger với thông tin chi tiết về API
+// Cấu hình Swagger với thông tin chi tiết về API (tạo tài liệu API tự động)
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -81,6 +128,37 @@ builder.Services.AddSwaggerGen(c =>
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
+
+    // Cấu hình Swagger để sử dụng JWT Bearer Authentication
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header
+    });
+
+    // Thêm yêu cầu bảo mật để sử dụng JWT Bearer Authentication trong Swagger UI
+    c.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
+    {
+        { new OpenApiSecuritySchemeReference("Bearer", doc), new List<string> { } }
+    });
+});
+
+// Đăng ký dịch vụ bộ nhớ phân tán (Distributed Memory Cache)
+// Dịch vụ này cần thiết để sử dụng session trong ASP.NET Core]
+// Nó lưu trữ dữ liệu session trong bộ nhớ của máy chủ
+// Lưu ý: Dữ liệu session sẽ bị mất khi ứng dụng khởi động lại
+// Nếu cần lưu trữ lâu dài hơn, có thể sử dụng các nhà cung cấp khác như Redis hoặc SQL Server
+builder.Services.AddDistributedMemoryCache();
+
+// Đăng ký dịch vụ session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian hết hạn session
+    options.Cookie.HttpOnly = true; // Chỉ cho phép truy cập cookie qua HTTP, không qua JavaScript
+    options.Cookie.IsEssential = true; // Cookie này là cần thiết cho ứng dụng
 });
 
 // Xây dựng (build) ứng dụng từ builder
