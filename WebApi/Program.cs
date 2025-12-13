@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
@@ -98,6 +99,50 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 
 // Đăng ký dịch vụ CORS để cho phép chia sẻ tài nguyên giữa các nguồn khác nhau
 builder.Services.AddCors();
+
+// Đăng ký dịch vụ Rate Limiting (Giới hạn số request gửi đến trong 1 khoảng thời gian)
+builder.Services.AddRateLimiter(options =>
+{
+    // Cấu hình rate limit kiểu Fixed Window
+    options.AddFixedWindowLimiter(policyName: "fixed", opt =>
+    {
+        opt.Window = TimeSpan.FromMinutes(1); // Khoảng thời gian giới hạn
+        opt.PermitLimit = 10; // Giới hạn số request
+        opt.QueueLimit = 0; // Số request tối đa trong hàng đợi
+        // opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    });
+
+    // Cấu hình rate limit kiểu Sliding Window
+    options.AddSlidingWindowLimiter("sliding", opt =>
+    {
+        opt.Window = TimeSpan.FromMinutes(1); // Khoảng thời gian giới hạn
+        opt.PermitLimit = 10; // Giới hạn số request
+        opt.SegmentsPerWindow = 6; // Chia cửa sổ thời gian thành 6 phần
+    });
+
+    // Cấu hình rate limit kiểu Token Bucket
+    options.AddTokenBucketLimiter("token", opt =>
+    {
+        opt.ReplenishmentPeriod = TimeSpan.FromSeconds(10);
+        opt.TokenLimit = 100;
+        opt.TokensPerPeriod = 20;
+    });
+
+    // Cấu hình rate limit kiểu Concurency
+    options.AddConcurrencyLimiter("concurrent", opt =>
+    {
+        opt.PermitLimit = 5;
+    });
+
+    // Cấu hình phản hồi khi vượt quá giới hạn
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        await context.HttpContext.Response.WriteAsync(
+            "Too many requests. Please try again later!", cancellationToken
+        );
+    };
+});
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 // Đăng ký dịch vụ OpenAPI (Swagger) để tạo tài liệu API tự động
@@ -210,6 +255,9 @@ app.UseCors(builder =>
 
 // Thiết lập hệ thống định tuyến, cho phép ánh xạ URL đến các controller hoặc endpoint tương ứng
 app.UseRouting();
+
+// Sử dụng rate limiting middleware
+app.UseRateLimiter();
 
 // Chuyển hướng tất cả các yêu cầu HTTP sang HTTPS để bảo mật
 app.UseHttpsRedirection();

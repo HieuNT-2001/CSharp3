@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using WebApi.Models.Dto;
 using WebApi.Models.Entities;
 using WebApi.Services.Interfaces;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+    [EnableRateLimiting("sliding")]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;

@@ -18,7 +18,7 @@ namespace WebApi.Handlers
             CancellationToken cancellationToken)
         {
             // Ghi log lỗi
-            _logger.LogError(exception, "An error occurred: {Message}.", exception.Message);
+            _logger.LogError(exception, exception.Message);
 
             var problemDetails = new ProblemDetails
             {

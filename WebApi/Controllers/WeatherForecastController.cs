@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [EnableRateLimiting("sliding")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries =
