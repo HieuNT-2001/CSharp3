@@ -5,9 +5,9 @@ namespace MinimalAPI.Endpoints;
 
 public static class CategoryEndpoints
 {
-    public static void MapCategoryEndpoints (this IEndpointRouteBuilder routes)
+    public static void MapCategoryEndpoints(this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/api/Category").WithTags(nameof(Category));
+        var group = routes.MapGroup("/api/Category").RequireRateLimiting("fixed").WithTags(nameof(Category));
 
         group.MapGet("/", async (ICategoryService categoryService) =>
         {

@@ -7,7 +7,7 @@ public static class ProductEndpoints
 {
     public static void MapProductEndpoints(this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/api/Product").WithTags(nameof(Product));
+        var group = routes.MapGroup("/api/Product").RequireRateLimiting("fixed").WithTags(nameof(Product));
 
         group.MapGet("/", async (IProductService productService) =>
         {

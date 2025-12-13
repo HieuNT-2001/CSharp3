@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using MinimalAPI.Data;
@@ -22,6 +24,50 @@ builder.Services.AddScoped<IProductService, ProductService>();
 
 // Đăng ký dịch vụ CategoryService cho ICategoryService
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+// Đăng ký dịch vụ Rate Limiting (Giới hạn số request gửi đến trong 1 khoảng thời gian)
+builder.Services.AddRateLimiter(options =>
+{
+    // Cấu hình rate limit kiểu Fixed Window
+    options.AddFixedWindowLimiter(policyName: "fixed", opt =>
+    {
+        opt.Window = TimeSpan.FromMinutes(1); // Khoảng thời gian giới hạn
+        opt.PermitLimit = 10; // Giới hạn số request
+        opt.QueueLimit = 0; // Số request tối đa trong hàng đợi
+        // opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    });
+
+    // Cấu hình rate limit kiểu Sliding Window
+    options.AddSlidingWindowLimiter("sliding", opt =>
+    {
+        opt.Window = TimeSpan.FromMinutes(1); // Khoảng thời gian giới hạn
+        opt.PermitLimit = 10; // Giới hạn số request
+        opt.SegmentsPerWindow = 6; // Chia cửa sổ thời gian thành 6 phần
+    });
+
+    // Cấu hình rate limit kiểu Token Bucket
+    options.AddTokenBucketLimiter("token", opt =>
+    {
+        opt.ReplenishmentPeriod = TimeSpan.FromSeconds(10);
+        opt.TokenLimit = 100;
+        opt.TokensPerPeriod = 20;
+    });
+
+    // Cấu hình rate limit kiểu Concurency
+    options.AddConcurrencyLimiter("concurrent", opt =>
+    {
+        opt.PermitLimit = 5;
+    });
+
+    // Cấu hình phản hồi khi vượt quá giới hạn
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        await context.HttpContext.Response.WriteAsync(
+            "Too many requests. Please try again later!", cancellationToken
+        );
+    };
+});
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -92,31 +138,10 @@ if (app.Environment.IsDevelopment())
 }
 
 // Cấu hình xử lý ngoại lệ toàn cục
-//app.UseExceptionHandler(errorApp =>
-//{
-//    errorApp.Run(async context =>
-//    {
-//        var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-//        if (exceptionHandlerPathFeature?.Error is { } exception)
-//        {
-//            // Ghi log lỗi
-//            var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-//            logger.LogError(exception, "An unhandled exception occurred: {Message}.", exception.Message);
-
-//            // Trả về phản hồi
-//            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-//            context.Response.ContentType = "application/json";
-//            var response = new
-//            {
-//                statusCode = context.Response.StatusCode,
-//                Message = "An unexpected error occurred. Please try again later.",
-//                Detailed = app.Environment.IsDevelopment() ? exception.Message : null
-//            };
-//            await context.Response.WriteAsJsonAsync(response);
-//        }
-//    });
-//});
 app.UseExceptionHandler();
+
+// Sử dụng rate limiting middleware
+app.UseRateLimiter();
 
 // Chuyển hướng tất cả các yêu cầu HTTP sang HTTPS để bảo mật
 app.UseHttpsRedirection();
@@ -138,7 +163,7 @@ app.MapGet("/weatherforecast", () =>
         .ToArray();
     return forecast;
 })
-.WithName("GetWeatherForecast");
+.WithName("GetWeatherForecast").RequireRateLimiting("fixed");
 
 // Map endpoints
 app.MapProductEndpoints();
