@@ -8,6 +8,7 @@ namespace WebApi.Models.Dto
         public string Description { get; set; } = string.Empty;
         public long Quantity { get; set; }
         public bool Status { get; set; }
-        public string Category { get; set; } = string.Empty;
+        public long CategoryId { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
     }
 }

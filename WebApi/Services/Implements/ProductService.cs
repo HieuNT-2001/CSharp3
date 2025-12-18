@@ -58,7 +58,8 @@ namespace WebApi.Services.Implements
                 Description = p.Description,
                 Quantity = p.Quantity,
                 Status = p.Status,
-                Category = p.Category!.CategoryName
+                CategoryId = p.Category!.CategoryId,
+                CategoryName = p.Category!.CategoryName
             }).ToListAsync();
         }
 
@@ -72,7 +73,8 @@ namespace WebApi.Services.Implements
                 Description = p.Description,
                 Quantity = p.Quantity,
                 Status = p.Status,
-                Category = p.Category!.CategoryName
+                CategoryId = p.Category!.CategoryId,
+                CategoryName = p.Category!.CategoryName
             }).FirstOrDefaultAsync();
         }
     }
