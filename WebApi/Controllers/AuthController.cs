@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using WebApi.Models.Dto;
@@ -52,6 +53,16 @@ namespace WebApi.Controllers
             var tokens = await _tokenService.RefreshAsync(request.RefreshToken);
             if (tokens == null) return Unauthorized();
             return Ok(tokens);
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout(LogoutRequest request)
+        {
+            var success = await _tokenService.RevokeRefreshTokenAsync(request.RefreshToken);
+            if (!success) return BadRequest("Invalid refresh token");
+
+            return Ok(new { message = "Logged out" });
         }
     }
 }

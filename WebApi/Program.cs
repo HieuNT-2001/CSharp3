@@ -107,7 +107,7 @@ builder.Services.AddRateLimiter(options =>
     options.AddFixedWindowLimiter(policyName: "fixed", opt =>
     {
         opt.Window = TimeSpan.FromMinutes(1); // Khoảng thời gian giới hạn
-        opt.PermitLimit = 10; // Giới hạn số request
+        opt.PermitLimit = 100; // Giới hạn số request
         opt.QueueLimit = 0; // Số request tối đa trong hàng đợi
         // opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
     });
@@ -116,7 +116,7 @@ builder.Services.AddRateLimiter(options =>
     options.AddSlidingWindowLimiter("sliding", opt =>
     {
         opt.Window = TimeSpan.FromMinutes(1); // Khoảng thời gian giới hạn
-        opt.PermitLimit = 10; // Giới hạn số request
+        opt.PermitLimit = 100; // Giới hạn số request
         opt.SegmentsPerWindow = 6; // Chia cửa sổ thời gian thành 6 phần
     });
 

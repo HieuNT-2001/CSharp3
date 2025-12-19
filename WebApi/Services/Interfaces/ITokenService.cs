@@ -7,5 +7,6 @@ namespace WebApi.Services.Interfaces
     {
         Task<TokenResponse> GenerateTokensAsync(User user);
         Task<TokenResponse?> RefreshAsync(string refreshToken);
+        Task<bool> RevokeRefreshTokenAsync(string refreshToken);
     }
 }

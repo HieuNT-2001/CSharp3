@@ -4,4 +4,6 @@
     public record LoginDto(string Email, string Password);
     public record TokenResponse(string AccessToken, string RefreshToken, DateTime AccessTokenExpiration);
     public record RefreshRequest(string RefreshToken);
+    public record LogoutRequest(string RefreshToken);
+
 }

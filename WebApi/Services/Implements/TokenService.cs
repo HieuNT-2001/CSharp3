@@ -103,5 +103,19 @@ namespace WebApi.Services.Implements
 
             return new TokenResponse(access.TokenString, newRefresh.Token, access.Expires);
         }
+
+        public async Task<bool> RevokeRefreshTokenAsync(string refreshToken)
+        {
+            var token = await _db.RefreshTokens
+                .FirstOrDefaultAsync(x => x.Token == refreshToken && !x.IsRevoked);
+
+            if (token == null) return false;
+
+            token.IsRevoked = true;
+            _db.RefreshTokens.Update(token);
+            await _db.SaveChangesAsync();
+
+            return true;
+        }
     }
 }
